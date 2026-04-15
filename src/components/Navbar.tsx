@@ -152,12 +152,8 @@ export default function Navbar() {
       }
   }
 
-  if (pathname === '/guest') {
-      return null;
-  }
-
   return (
-    <nav className={`w-full z-50 sticky top-0 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 transition-colors duration-300`}>
+    <nav className={`w-full z-[100] sticky top-0 bg-white dark:bg-black border-b border-gray-200 dark:border-white/10 transition-colors duration-300 ${pathname?.startsWith('/guest') ? 'md:hidden block' : 'block'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* LOGO: Zamonaviy va Premium */}
