@@ -419,8 +419,8 @@ export default function StudentProfile() {
       <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-3xl overflow-hidden shadow-sm">
          <div className="relative h-48 md:h-64 w-full bg-gray-200 dark:bg-zinc-800 group">
             <img src={coverImage} className="w-full h-full object-cover" alt="Cover" />
-            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-               <button onClick={() => coverInputRef.current?.click()} className="flex items-center gap-2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white px-4 py-2 rounded-full font-medium transition active:scale-95 shadow-lg">
+            <div className="absolute inset-0 bg-black/20 md:bg-black/30 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center">
+               <button onClick={() => coverInputRef.current?.click()} className="flex items-center gap-2 bg-black/40 md:bg-white/20 hover:bg-white/40 backdrop-blur-md text-white px-4 py-2 rounded-full font-medium transition active:scale-95 shadow-lg border border-white/20">
                   <Camera className="w-4 h-4" /> Fonni o'zgartirish
                </button>
                <input type="file" hidden ref={coverInputRef} accept="image/*" onChange={handleCoverUpload} />
@@ -433,7 +433,10 @@ export default function StudentProfile() {
                   <div className="w-32 h-32 rounded-full border-4 border-white dark:border-[#121212] bg-white dark:bg-black overflow-hidden shadow-md">
                      <img src={avatarImage} className="w-full h-full object-cover" alt="Avatar" />
                   </div>
-                  <button onClick={() => avatarInputRef.current?.click()} className="absolute bottom-1 right-1 w-10 h-10 bg-gray-900 border-2 border-white dark:border-[#121212] text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-transform opacity-0 group-hover:opacity-100 shadow-md">
+                  <button 
+                    onClick={() => avatarInputRef.current?.click()} 
+                    className="absolute bottom-1 right-1 w-10 h-10 bg-gray-900 border-2 border-white dark:border-[#121212] text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 shadow-md"
+                  >
                      <Camera className="w-4 h-4" />
                   </button>
                   <input type="file" hidden ref={avatarInputRef} accept="image/*" onChange={handleAvatarUpload} />
