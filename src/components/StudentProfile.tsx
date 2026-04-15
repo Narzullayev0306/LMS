@@ -122,6 +122,11 @@ export default function StudentProfile() {
      const file = e.target.files?.[0];
      if (!file || !session?.user?.email) return;
 
+     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        alert("Xatolik: Supabase URL topilmadi. Netlify sozlamalarini tekshiring.");
+        return;
+     }
+
      setCoverImage(URL.createObjectURL(file));
 
      const ext = file.name.split('.').pop();
@@ -136,13 +141,18 @@ export default function StudentProfile() {
             alert(`DB Ga Rasm yozilmadi: ${dbErr.message}`);
         }
      } else {
-        alert("Cover rasm xotiraga yuklanmadi: " + error?.message);
+        alert("Cover rasm xotiraga yuklanmadi. Muammo: " + (error?.message === "Load failed" ? "Netlify sozlamalarida Environment Variables (Supabase URL/Key) yo'q yoki CORS taqiqlangan." : error?.message));
      }
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
      const file = e.target.files?.[0];
      if (!file || !session?.user?.email) return;
+
+     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        alert("Xatolik: Supabase URL topilmadi. Netlify sozlamalarini tekshiring.");
+        return;
+     }
 
      setAvatarImage(URL.createObjectURL(file));
 
@@ -157,7 +167,7 @@ export default function StudentProfile() {
             alert(`DB Ga Rasm yozilmadi: ${dbErr.message}`);
         }
      } else {
-        alert("Avatar rasm xotiraga yuklanmadi: " + error?.message);
+        alert("Avatar rasm xotiraga yuklanmadi. Muammo: " + (error?.message === "Load failed" ? "Netlify sozlamalarida Environment Variables (Supabase URL/Key) yo'q yoki CORS taqiqlangan." : error?.message));
      }
   };
 
@@ -195,6 +205,10 @@ export default function StudentProfile() {
   const handleAddStory = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+         alert("Xatolik: Supabase URL topilmadi.");
+         return;
+      }
       setUploadingStory(true);
       const ext = file.name.split('.').pop();
       const fileName = `story_${Date.now()}_${Math.floor(Math.random()*1000)}.${ext}`;
@@ -202,7 +216,7 @@ export default function StudentProfile() {
       const { data: uploadData, error: uploadErr } = await supabase.storage.from('lms-media').upload(`stories/${fileName}`, file);
       
       if (uploadErr) {
-          alert(`Story yuklanmadi:\n${uploadErr.message}`);
+          alert(`Story yuklanmadi. Muammo: ${uploadErr.message === "Load failed" ? "Tarmoq xatosi yoki Environment Variables yetishmayapti." : uploadErr.message}`);
       }
 
       if (uploadData) {
@@ -275,12 +289,17 @@ export default function StudentProfile() {
     let publicUrl = null;
 
     if (newPostFile) {
+       if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+          alert("Xatolik: Supabase URL topilmadi.");
+          setLoadingPost(false);
+          return;
+       }
        const ext = newPostFile.name.split('.').pop();
        const fileName = `post_${Date.now()}_${Math.floor(Math.random()*1000)}.${ext}`;
        const { data: uploadData, error: uploadErr } = await supabase.storage.from('lms-media').upload(`posts/${fileName}`, newPostFile);
        
        if (uploadErr) {
-           alert(`Rasm xotiraga yuklanmadi (Supabase Xatosi):\n${uploadErr.message}`);
+           alert(`Rasm xotiraga yuklanmadi. Muammo: ${uploadErr.message === "Load failed" ? "Netlify Env Vars sozlanmagan." : uploadErr.message}`);
        }
 
        if (uploadData) {
