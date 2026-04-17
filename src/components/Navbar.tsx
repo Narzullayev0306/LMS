@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Menu, X, LogOut, Code, User, BookOpen, LayoutDashboard, Sun, Moon, Users, Bell, Shield, Building, ChevronDown } from 'lucide-react';
+import { Menu, X, LogOut, Code, User, BookOpen, LayoutDashboard, Sun, Moon, Users, Bell, Shield, Building, ChevronDown, LogIn } from 'lucide-react';
 import { useSession, signOut } from "next-auth/react";
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
