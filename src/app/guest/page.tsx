@@ -63,7 +63,7 @@ export default function GuestLandingPage() {
   }, []);
 
   return (
-    <div className="w-full font-sans bg-white dark:bg-[#121212] text-gray-900 dark:text-white transition-colors duration-300 overflow-x-hidden">
+    <div className="w-[100vw] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 -mb-12 font-sans bg-white dark:bg-[#121212] text-gray-900 dark:text-white pb-0 transition-colors duration-300 overflow-x-hidden">
       
       {/* 1. Header & Navigation (Sticky Secondary Nav) */}
       <div className="sticky top-0 z-40 bg-white dark:bg-[#121212] shadow-sm dark:shadow-none transition-all border-b border-gray-100 dark:border-white/10 hidden md:block w-full">
