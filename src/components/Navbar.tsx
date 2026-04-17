@@ -165,17 +165,34 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`flex justify-between items-center transition-all duration-300 ${isScrolled ? 'h-16' : 'h-16 md:h-20'}`}>
           {/* LOGO */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 md:w-10 md:h-10 bg-gradient-to-tr from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 text-white dark:text-black flex items-center justify-center rounded-xl shadow-lg group-hover:shadow-indigo-500/20 transition-all duration-300 transform group-hover:rotate-3">
-              <Code className="w-5 h-5 md:w-6 md:h-6" />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative flex items-center justify-center">
+              {/* Logo Background Glow */}
+              <div className="absolute -inset-2 bg-indigo-500/20 dark:bg-indigo-400/10 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              {/* Custom SVG Logo */}
+              <div className="relative w-10 h-10 md:w-11 md:h-11 bg-white dark:bg-zinc-900 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-gray-100 dark:border-white/5 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:shadow-indigo-500/10 group-hover:border-indigo-500/20 group-hover:-translate-y-0.5">
+                <svg className="w-6 h-6 md:w-7 md:h-7 transition-all duration-500 group-hover:scale-110" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M50 15L20 85H35L50 50L65 85H80L50 15Z" className="fill-indigo-600 dark:fill-indigo-400" />
+                  <path d="M50 65L42 80H58L50 65Z" className="fill-white dark:fill-black" fillOpacity="0.4" />
+                  <circle cx="50" cy="40" r="4" className="fill-white dark:fill-indigo-900" />
+                </svg>
+                {/* Decorative Elements */}
+                <div className="absolute top-0 right-0 w-4 h-4 bg-indigo-500/10 rounded-bl-xl border-l border-b border-indigo-500/20"></div>
+              </div>
             </div>
-            <span className="text-xl md:text-2xl font-black tracking-tighter text-gray-900 dark:text-white transition-colors">
-              {(!session || userRole === 'guest') ? (
-                 "Akita"
-              ) : (
-                 <>LMS<span className="text-indigo-500 font-medium">Akita</span></>
-              )}
-            </span>
+
+            {/* Wordmark Typography */}
+            <div className="flex flex-col -gap-0.5">
+              <span className="text-xl md:text-2xl font-black tracking-tighter text-gray-900 dark:text-white transition-colors leading-none flex items-center gap-1">
+                {(!session || userRole === 'guest') ? (
+                   <>AKITA<span className="text-indigo-500">.</span></>
+                ) : (
+                   <>LMS<span className="text-indigo-500">AKITA</span></>
+                )}
+              </span>
+              <span className="text-[10px] md:text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[.25em] leading-none ml-0.5">University</span>
+            </div>
           </Link>
 
           {/* Desktop Menu */}
