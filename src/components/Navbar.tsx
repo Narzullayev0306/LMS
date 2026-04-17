@@ -13,6 +13,7 @@ export default function Navbar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
   const { data: session } = useSession();
@@ -114,6 +115,13 @@ export default function Navbar() {
 
   useEffect(() => {
     setMounted(true);
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Dropdown tashqarisiga bosganida yopish
@@ -153,32 +161,32 @@ export default function Navbar() {
   }
 
   return (
-    <nav className={`w-full z-[100] sticky top-0 bg-white dark:bg-black border-b border-gray-200 dark:border-white/10 transition-colors duration-300 ${pathname?.startsWith('/guest') ? 'md:hidden block' : 'block'}`}>
+    <nav className={`w-full z-[100] sticky top-0 transition-all duration-300 ${isScrolled || isOpen ? 'bg-white/90 dark:bg-black/90 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 shadow-sm' : 'bg-white dark:bg-black md:bg-transparent border-b border-transparent'} ${pathname?.startsWith('/guest') ? 'md:hidden block' : 'block'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* LOGO: Zamonaviy va Premium */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-tr from-black to-gray-700 dark:from-white dark:to-gray-300 text-white dark:text-black flex items-center justify-center rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105">
-              <Code className="w-6 h-6" />
+        <div className={`flex justify-between items-center transition-all duration-300 ${isScrolled ? 'h-16' : 'h-16 md:h-20'}`}>
+          {/* LOGO */}
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 md:w-10 md:h-10 bg-gradient-to-tr from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 text-white dark:text-black flex items-center justify-center rounded-xl shadow-lg group-hover:shadow-indigo-500/20 transition-all duration-300 transform group-hover:rotate-3">
+              <Code className="w-5 h-5 md:w-6 md:h-6" />
             </div>
-            <span className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white group-hover:text-black dark:group-hover:text-gray-200">
+            <span className="text-xl md:text-2xl font-black tracking-tighter text-gray-900 dark:text-white transition-colors">
               {(!session || userRole === 'guest') ? (
                  "Akita"
               ) : (
-                 <>LMS<span className="text-gray-400 dark:text-gray-500 font-medium">Akita</span></>
+                 <>LMS<span className="text-indigo-500 font-medium">Akita</span></>
               )}
             </span>
           </Link>
 
-          {/* Katta ekranlar uchun menyu: Silliq Animatsiyalar */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
-            <div className="flex bg-gray-100/50 dark:bg-white/5 backdrop-blur-md p-1 rounded-2xl border border-gray-200/50 dark:border-white/5 mr-6 shadow-sm transition-colors">
+            <div className="flex bg-gray-100/50 dark:bg-white/5 backdrop-blur-md p-1 rounded-2xl border border-gray-200/50 dark:border-white/5 mr-6 shadow-sm">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
-                  <Link key={link.name} href={link.href} className={`relative px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 flex items-center gap-2 ${isActive ? 'bg-white dark:bg-[#1f1f1f] text-black dark:text-white shadow-sm' : 'text-gray-500 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'
+                  <Link key={link.name} href={link.href} className={`relative px-5 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2 ${isActive ? 'bg-white dark:bg-white/10 text-black dark:text-white shadow-sm' : 'text-gray-500 hover:text-black dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
                     }`}>
-                    <link.icon className={`w-4 h-4 ${isActive ? 'text-black dark:text-white' : 'text-gray-400'}`} />
+                    <link.icon className={`w-3.5 h-3.5 ${isActive ? 'text-indigo-500' : 'text-gray-400'}`} />
                     {link.name}
                     {link.badge && link.badge > 0 ? (
                         <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm">{link.badge}</span>
@@ -188,181 +196,142 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* Tema o'zgartirgich */}
             {mounted && (
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl hover:bg-gray-100 dark:hover:bg-white/10 transition-all shadow-sm group mr-4"
+                className="p-2.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl hover:bg-white dark:hover:bg-white/10 transition-all shadow-sm group mr-4"
               >
-                {theme === 'dark' ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-600" />}
+                {theme === 'dark' ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-gray-600" />}
               </button>
             )}
 
-            {/* User Profil UI */}
             {session ? (
-              // Kirgan foydalanuvchi — avatar + dropdown
               <div className="relative pl-4 border-l border-gray-200 dark:border-white/10" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2.5 group hover:bg-gray-100 dark:hover:bg-white/5 rounded-2xl px-3 py-2 transition-all duration-200"
+                  className="flex items-center gap-2.5 group hover:bg-gray-100 dark:hover:bg-white/5 rounded-2xl px-3 py-1.5 transition-all duration-200"
                 >
-                  <div className="h-9 w-9 relative rounded-full overflow-hidden border-2 border-white dark:border-zinc-700 shadow-md ring-2 ring-offset-1 ring-transparent group-hover:ring-indigo-400 transition-all">
+                  <div className="h-8 w-8 relative rounded-full overflow-hidden border border-gray-200 dark:border-zinc-700 shadow-sm transition-all group-hover:border-indigo-400">
                     <img
                       src={session.user?.image || "https://api.dicebear.com/7.x/notionists/svg?seed=Guest"}
                       className="object-cover w-full h-full"
                       alt="avatar"
                     />
                   </div>
-                  {isGuest && (
-                    <span className="text-xs font-bold px-2 py-0.5 bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full border border-amber-200 dark:border-amber-500/20">
-                      Mehmon
-                    </span>
-                  )}
-                  <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                {/* Dropdown menyu */}
                 {dropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-[#141414] border border-gray-200 dark:border-white/10 rounded-2xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    {/* Foydalanuvchi ma'lumoti */}
-                    <div className="px-4 py-3 border-b border-gray-100 dark:border-white/5">
-                      <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{session.user?.name}</p>
-                      <p className="text-xs text-gray-400 truncate">{session.user?.email}</p>
-                      {isGuest && (
-                        <span className="mt-1.5 inline-block text-[11px] font-bold px-2 py-0.5 bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full border border-amber-200 dark:border-amber-500/20">
-                          🔒 Mehmon maqomi
-                        </span>
-                      )}
+                  <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-[#0c0c0e] border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="px-4 py-4 bg-gray-50/50 dark:bg-white/5 border-b border-gray-100 dark:border-white/5">
+                      <p className="text-sm font-black text-gray-900 dark:text-white truncate uppercase tracking-tight">{session.user?.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{session.user?.email}</p>
                     </div>
 
-                    {/* Havolalar */}
                     <div className="p-2">
                       <Link
                         href="/profile"
                         onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                       >
-                        <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg flex items-center justify-center">
-                          <User className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                        </div>
-                        Mening profilim
+                        <User className="w-4 h-4 text-indigo-500" /> Mening profilim
                       </Link>
-
                       {!isGuest && (
                         <Link
                           href="/notifications"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                         >
-                          <div className="w-8 h-8 bg-blue-50 dark:bg-blue-500/10 rounded-lg flex items-center justify-center">
-                            <Bell className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                          </div>
-                          Bildirishnomalar
-                          {unreadCount > 0 && (
-                            <span className="ml-auto text-[11px] font-bold bg-red-500 text-white px-1.5 py-0.5 rounded-full">{unreadCount}</span>
-                          )}
+                          <Bell className="w-4 h-4 text-blue-500" /> Bildirishnomalar
                         </Link>
                       )}
                     </div>
-
-                    <div className="h-px bg-gray-100 dark:bg-white/5 mx-2" />
-
-                    <div className="p-2">
+                    <div className="p-2 border-t border-gray-100 dark:border-white/5">
                       <button
                         onClick={() => { signOut(); setDropdownOpen(false); }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
                       >
-                        <div className="w-8 h-8 bg-red-50 dark:bg-red-500/10 rounded-lg flex items-center justify-center">
-                          <LogOut className="w-4 h-4 text-red-500" />
-                        </div>
-                        Tizimdan chiqish
+                         <LogOut className="w-4 h-4" /> Tizimdan chiqish
                       </button>
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              // Umuman kirmagan mehmon — Tizimga Kirish tugmasi
-              <Link href="/login" className="px-6 py-2.5 bg-black dark:bg-white text-white dark:text-black text-sm font-bold rounded-xl hover:bg-gray-800 dark:hover:bg-gray-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-                Tizimga Kirish
+              <Link href="/login" className="px-6 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-black text-xs font-black uppercase tracking-widest rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                Kirish
               </Link>
             )}
           </div>
 
-          {/* Mobil uchun Hamburger tugmasi */}
-          <div className="flex md:hidden items-center gap-3">
+          {/* Mobile Buttons */}
+          <div className="flex md:hidden items-center gap-2">
             {mounted && (
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2.5 bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-xl active:scale-95 transition-transform"
+                className="p-2 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl active:scale-90 transition-all"
               >
                 {theme === 'dark' ? <Sun className="w-5 h-5 text-yellow-500" /> : <Moon className="w-5 h-5 text-gray-600" />}
               </button>
             )}
             <button
               aria-label="Menyuni ochish"
-              className="flex items-center justify-center min-w-[44px] min-h-[44px] p-2 bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 text-gray-800 dark:text-white rounded-xl active:scale-95 transition-transform shadow-sm"
+              className="w-10 h-10 flex items-center justify-center bg-gray-900 dark:bg-white text-white dark:text-black rounded-xl active:scale-90 transition-all shadow-md"
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobil menyu: Glass effekti va Animatsiya bilan */}
+      {/* Mobil menyu: Premium Overlay */}
       <div 
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out bg-white dark:bg-black border-t border-gray-200 dark:border-white/10 shadow-2xl absolute w-full left-0 z-[90] ${
-          isOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
+        className={`md:hidden overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] bg-white/95 dark:bg-black/95 backdrop-blur-2xl border-t border-gray-200 dark:border-white/10 shadow-2xl absolute w-full left-0 z-[90] ${
+          isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
         }`}
       >
-        <div className="p-5 flex flex-col gap-1.5">
+        <div className="p-6 flex flex-col gap-2 animate-in fade-in slide-in-from-top-4 duration-500">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link 
                 key={link.name} 
                 href={link.href} 
-                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl font-semibold transition-all active:scale-[0.98] ${
+                className={`w-full flex items-center justify-between px-5 py-4 rounded-2xl font-black text-sm uppercase tracking-wider transition-all active:scale-[0.97] ${
                   isActive 
-                    ? 'bg-gray-900 dark:bg-white text-white dark:text-black shadow-md' 
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-black shadow-xl ring-4 ring-gray-900/10 dark:ring-white/10' 
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'
                 }`} 
                 onClick={() => setIsOpen(false)}
               >
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-xl ${isActive ? 'bg-white/10 dark:bg-black/10' : 'bg-gray-100 dark:bg-white/5'}`}>
-                    <link.icon className="w-5 h-5" />
-                  </div>
+                <div className="flex items-center gap-4">
+                  <link.icon className={`w-5 h-5 ${isActive ? 'text-indigo-400 dark:text-indigo-600' : 'text-gray-400'}`} />
                   <span>{link.name}</span>
                 </div>
                 {link.badge && link.badge > 0 && (
-                  <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">{link.badge}</span>
+                  <span className="w-5 h-5 flex items-center justify-center bg-red-500 text-white text-[10px] font-black rounded-full shadow-lg">{link.badge}</span>
                 )}
               </Link>
             );
           })}
 
-          <div className="h-px bg-gray-100 dark:bg-white/5 w-full my-3"></div>
+          <div className="h-px bg-gray-100 dark:bg-white/10 w-full my-4"></div>
 
           {session ? (
-            <div className="bg-gray-50 dark:bg-white/5 rounded-3xl p-4 mt-1 border border-gray-100 dark:border-white/5">
-              <div className="flex items-center gap-3 mb-4">
+            <div className="bg-gray-50 dark:bg-white/5 rounded-[2rem] p-5 border border-gray-200 dark:border-white/5">
+              <div className="flex items-center gap-4 mb-5">
                 <div className="relative">
                   <img
                     src={session.user?.image || "https://api.dicebear.com/7.x/notionists/svg?seed=Guest"}
-                    className="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm"
+                    className="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-800 shadow-md"
                     alt="avatar"
                   />
-                  {isGuest && (
-                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center border-2 border-white dark:border-[#121212]">
-                      <Shield className="w-3 h-3 text-white" />
-                    </div>
-                  )}
+                  {isGuest && <Shield className="w-4 h-4 text-amber-500 absolute -bottom-1 -right-1 fill-white dark:fill-black" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold dark:text-white truncate">{session.user?.name}</p>
-                  <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">{session.user?.email}</p>
+                  <p className="text-sm font-black dark:text-white truncate uppercase tracking-tight">{session.user?.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{session.user?.email}</p>
                 </div>
               </div>
               
@@ -370,15 +339,15 @@ export default function Navbar() {
                 <Link
                   href="/profile"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 bg-white dark:bg-white/10 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-white/10 py-3 rounded-2xl text-xs font-bold transition-all active:scale-95 shadow-sm"
+                  className="flex items-center justify-center gap-2 bg-white dark:bg-white/10 text-gray-900 dark:text-white border border-gray-200 dark:border-white/10 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm"
                 >
-                  <User className="w-3.5 h-3.5" /> Profil
+                  <User className="w-4 h-4" /> Profil
                 </Link>
                 <button
                   onClick={() => signOut()}
-                  className="flex items-center justify-center gap-2 bg-red-500 dark:bg-red-500 text-white py-3 rounded-2xl text-xs font-bold transition-all active:scale-95 shadow-lg shadow-red-500/20"
+                  className="flex items-center justify-center gap-2 bg-red-500 text-white py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-red-500/20"
                 >
-                  <LogOut className="w-3.5 h-3.5" /> Chiqish
+                  <LogOut className="w-4 h-4" /> Chiqish
                 </button>
               </div>
             </div>
@@ -386,7 +355,7 @@ export default function Navbar() {
             <Link 
               href="/login" 
               onClick={() => setIsOpen(false)}
-              className="w-full py-4 mt-2 flex items-center justify-center gap-3 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold transition-all active:scale-95 shadow-xl hover:shadow-2xl"
+              className="w-full py-5 flex items-center justify-center gap-3 bg-gray-900 dark:bg-white text-white dark:text-black rounded-2xl font-black uppercase tracking-[0.2em] text-sm transition-all active:scale-[0.98] shadow-2xl"
             >
               <LogIn className="w-5 h-5" />
               Tizimga Kirish
