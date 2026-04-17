@@ -310,58 +310,90 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobil menyu: Glass effekti bilan */}
-      {isOpen && (
-        <div className="md:hidden flex flex-col p-4 bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10 shadow-2xl absolute w-full left-0">
-          {navLinks.map((link) => (
-            <Link key={link.name} href={link.href} className={`w-full h-[52px] flex items-center gap-3 px-4 mb-2 rounded-xl font-medium transition-all ${pathname === link.href ? 'bg-black dark:bg-white text-white dark:text-black shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'
-              }`} onClick={() => setIsOpen(false)}>
-              <link.icon className="w-5 h-5" />
-              {link.name}
-            </Link>
-          ))}
+      {/* Mobil menyu: Glass effekti va Animatsiya bilan */}
+      <div 
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out bg-white dark:bg-black border-t border-gray-200 dark:border-white/10 shadow-2xl absolute w-full left-0 z-[90] ${
+          isOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="p-5 flex flex-col gap-1.5">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link 
+                key={link.name} 
+                href={link.href} 
+                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl font-semibold transition-all active:scale-[0.98] ${
+                  isActive 
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-black shadow-md' 
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'
+                }`} 
+                onClick={() => setIsOpen(false)}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-xl ${isActive ? 'bg-white/10 dark:bg-black/10' : 'bg-gray-100 dark:bg-white/5'}`}>
+                    <link.icon className="w-5 h-5" />
+                  </div>
+                  <span>{link.name}</span>
+                </div>
+                {link.badge && link.badge > 0 && (
+                  <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">{link.badge}</span>
+                )}
+              </Link>
+            );
+          })}
 
-          <div className="h-px bg-gray-200 dark:bg-white/10 w-full my-4"></div>
+          <div className="h-px bg-gray-100 dark:bg-white/5 w-full my-3"></div>
 
           {session ? (
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 px-2">
-                <img
-                  src={session.user?.image || "https://api.dicebear.com/7.x/notionists/svg?seed=Guest"}
-                  className="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm"
-                  alt="avatar"
-                />
+            <div className="bg-gray-50 dark:bg-white/5 rounded-3xl p-4 mt-1 border border-gray-100 dark:border-white/5">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="relative">
+                  <img
+                    src={session.user?.image || "https://api.dicebear.com/7.x/notionists/svg?seed=Guest"}
+                    className="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm"
+                    alt="avatar"
+                  />
+                  {isGuest && (
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center border-2 border-white dark:border-[#121212]">
+                      <Shield className="w-3 h-3 text-white" />
+                    </div>
+                  )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold dark:text-white truncate">{session.user?.name}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{session.user?.email}</p>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">{session.user?.email}</p>
                 </div>
-                {isGuest && (
-                  <span className="text-[11px] font-bold px-2 py-0.5 bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full border border-amber-200 dark:border-amber-500/20 shrink-0">
-                    Mehmon
-                  </span>
-                )}
               </div>
-              <Link
-                href="/profile"
-                onClick={() => setIsOpen(false)}
-                className="w-full h-[48px] flex items-center justify-center gap-2 bg-gray-100 dark:bg-white/5 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-white/10 rounded-xl font-bold transition-colors active:scale-95"
-              >
-                <User className="w-4 h-4" /> Mening profilim
-              </Link>
-              <button
-                onClick={() => signOut()}
-                className="w-full h-[48px] flex items-center justify-center gap-2 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-500/20 rounded-xl font-bold transition-colors active:scale-95"
-              >
-                <LogOut className="w-4 h-4" /> Tizimdan chiqish
-              </button>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <Link
+                  href="/profile"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center gap-2 bg-white dark:bg-white/10 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-white/10 py-3 rounded-2xl text-xs font-bold transition-all active:scale-95 shadow-sm"
+                >
+                  <User className="w-3.5 h-3.5" /> Profil
+                </Link>
+                <button
+                  onClick={() => signOut()}
+                  className="flex items-center justify-center gap-2 bg-red-500 dark:bg-red-500 text-white py-3 rounded-2xl text-xs font-bold transition-all active:scale-95 shadow-lg shadow-red-500/20"
+                >
+                  <LogOut className="w-3.5 h-3.5" /> Chiqish
+                </button>
+              </div>
             </div>
           ) : (
-            <Link href="/login" className="w-full h-[52px] flex items-center justify-center gap-2 bg-black dark:bg-white text-white dark:text-black rounded-xl font-bold transition-colors active:scale-95 shadow-md">
+            <Link 
+              href="/login" 
+              onClick={() => setIsOpen(false)}
+              className="w-full py-4 mt-2 flex items-center justify-center gap-3 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold transition-all active:scale-95 shadow-xl hover:shadow-2xl"
+            >
+              <LogIn className="w-5 h-5" />
               Tizimga Kirish
             </Link>
           )}
         </div>
-      )}
+      </div>
     </nav>
   );
 }
